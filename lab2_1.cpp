@@ -16,12 +16,15 @@ const char* BUFFER_NAME = "_temp.txt";
 int main(int argc, char *argv[], char *envp[]) {
     struct stat sb;
 
+    // check for args
     if (argc < 1) {
         return -1;
     }
 
+    // open source file
     fstream file(argv[1], ios::in);
 
+    // check existence of file
     if (!file.is_open()) {
         file.close();
         return -1;
@@ -29,7 +32,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
     // create buffer file and fill it with contents of our file
     string buffer_str;
-    fstream buffer_file(BUFFER_NAME, ios::out);
+    fstream buffer_file(BUFFER_NAME, ios::out | ios::in | ios::trunc);
 
     while (getline(file, buffer_str)) {
         buffer_file << buffer_str << endl;
@@ -37,8 +40,7 @@ int main(int argc, char *argv[], char *envp[]) {
     file.close();
 
 
-    file.clear();
-    file.open(argv[1]);
+    file.open(argv[1], fstream::out | fstream::trunc);
     if (stat(argv[1], &sb) == 0 && sb.st_mode & S_IXGRP) {
 
         // add list of environment variables to beginning of the file
@@ -60,11 +62,7 @@ int main(int argc, char *argv[], char *envp[]) {
     }
     file << endl;
 
-    // сука переделать
-    buffer_file.close();
-    buffer_file.clear();
-    buffer_file.open(BUFFER_NAME);
-
+    buffer_file.seekg(buffer_file.beg);
     // put source data from buffer to our file
     while (getline(buffer_file, buffer_str)) {
         file << buffer_str << endl;
