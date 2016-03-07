@@ -41,7 +41,8 @@ int main(int argc, char *argv[], char *envp[]) {
 
 
     file.open(argv[1], fstream::out | fstream::trunc);
-    if (stat(argv[1], &sb) == 0 && sb.st_mode & S_IXGRP) {
+    mode_t mode = S_IXGRP; // execute permission for group
+    if (stat(argv[1], &sb) == 0 && sb.st_mode & mode) {
 
         // add list of environment variables to beginning of the file
         for (int i = 0; envp[i] != NULL; i++) {
