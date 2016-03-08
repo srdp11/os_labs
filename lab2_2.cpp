@@ -1,6 +1,8 @@
 #include <iostream>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <errno.h>
+#include <string.h>
 
 using namespace std;
 
@@ -17,14 +19,16 @@ int main(int argc, char *argv[], char *envp[]) {
     struct stat sb;
 
     // check for args
-    if (argc < 1) {
-        return -1;
+    if (argc == 1) {
+        cerr << "Error usage: " << strerror(errno) << endl;
+        exit(1);
     }
 
-    //open source file
+    // open source file
     int source_file = open(argv[1], O_RDONLY);
     if (source_file == -1) {
-        return -1;
+        cerr << strerror(errno) << endl;
+        exit(1);
     }
 
     // create buffer file and fill it with contents of our file
@@ -37,8 +41,8 @@ int main(int argc, char *argv[], char *envp[]) {
     close(source_file);
 
     source_file = open(argv[1], O_WRONLY);
-    mode_t mode = S_IXGRP; // execute permission for group
 
+    mode_t mode = S_IXGRP; // execute permission for group
     int j;
     const size_t delimiter_size = 3;
     char delimiter[delimiter_size] = ", ";

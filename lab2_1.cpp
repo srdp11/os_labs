@@ -17,8 +17,9 @@ int main(int argc, char *argv[], char *envp[]) {
     struct stat sb;
 
     // check for args
-    if (argc < 1) {
-        return -1;
+    if (argc == 1) {
+        cerr << "Error usage: " << strerror(errno) << endl;
+        exit(1);
     }
 
     // open source file
@@ -26,8 +27,7 @@ int main(int argc, char *argv[], char *envp[]) {
 
     // check existence of file
     if (!file.is_open()) {
-        file.close();
-        return -1;
+        cerr << strerror(errno) << endl;
     }
 
     // create buffer file and fill it with contents of our file
