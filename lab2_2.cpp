@@ -4,7 +4,7 @@
 
 using namespace std;
 
-const int BUFF_SIZE = 1;
+const int BUFF_SIZE = 100;
 const char* BUFFER_NAME = "_temp.txt";
 
 /*
@@ -30,8 +30,9 @@ int main(int argc, char *argv[], char *envp[]) {
     // create buffer file and fill it with contents of our file
     char buffer[BUFF_SIZE];
     int buffer_file = open(BUFFER_NAME, O_RDWR | O_CREAT, S_IRWXU);
-    while (read(source_file, &buffer, BUFF_SIZE) > 0) {
-        write(buffer_file, &buffer, BUFF_SIZE);
+    ssize_t num_readed_sym;
+    while ((num_readed_sym = read(source_file, &buffer, BUFF_SIZE)) > 0) {
+        write(buffer_file, &buffer, num_readed_sym);
     }
     close(source_file);
 
@@ -78,8 +79,8 @@ int main(int argc, char *argv[], char *envp[]) {
 
     // put source data from buffer to our file
     lseek(buffer_file, 0, SEEK_SET);
-    while(read(buffer_file, &buffer, BUFF_SIZE) > 0) {
-        write(source_file, &buffer, BUFF_SIZE);
+    while((num_readed_sym = read(buffer_file, &buffer, BUFF_SIZE)) > 0) {
+        write(source_file, &buffer, num_readed_sym);
     }
 
     // close files and remove buffer file
